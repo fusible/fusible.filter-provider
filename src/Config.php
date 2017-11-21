@@ -9,15 +9,30 @@ use Aura\Filter;
 
 class Config extends ContainerConfig
 {
+    const FACTORY = Filter\FilterFactory::class;
+
+    const VALIDATE_FACTORIES = self::class . '::VALIDATE_FACTORIES';
+    const SANITIZE_FACTORIES = self::class . '::SANITIZE_FACTORIES';
 
     /**
      * @SuppressWarnings(PHPMD.ShortVariable)
      */
     public function define(Container $di)
     {
+        $specs = [self::VALIDATE_FACTORIES, self::SANITIZE_FACTORIES];
+        foreach ($specs as $spec) {
+            isset($di->values[$spec]) || $di->values[$spec] = [];
+        }
+
         $di->set(
-            Filter\FilterFactory::class,
-            $di->lazyNew(Filter\FilterFactory::class)
+            self::FACTORY,
+            $di->lazyNew(
+                Filter\FilterFactory::class,
+                [
+                    'validate_factories' => $di->lazyValue(self::VALIDATE_FACTORIES),
+                    'sanitize_factories' => $di->lazyValue(self::SANITIZE_FACTORIES),
+                ]
+            )
         );
 
         $di->params[Filter\SubjectFilter::class] = [
