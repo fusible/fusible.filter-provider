@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-        "aura/di": "^3.4",
+        "aura/di": "^4.0",
         "aura/filter": "^2.3"
     },
     "autoload": {
